@@ -1,6 +1,8 @@
 from langchain_openai import ChatOpenAI 
 from langchain.agents import create_agent
-from langchain_community.tools import TavilySearchResults
+#from langchain_community.tools import TavilySearchResults
+from langchain_tavily import TavilySearch
+import datetime
 import os
 from openai import OpenAI
 from dotenv import load_dotenv
@@ -14,13 +16,21 @@ llm = ChatOpenAI(
     temperature=0.7,
 )
 
-search_tool = TavilySearchResults(search_depth='basic')
+Search_tool = TavilySearch(search_depth='basic')
 
-agent = create_agent(tools= [search_tool], model = llm )
-response = agent.invoke({"messages": [{"role": "user", "content": "what the weather in banglore now write a tweet"}]})
+
+def get_system_time(format: str = "%Y-%m-%d %H:%M:%S"):
+    """Returns the current date and time in the specified format"""
+
+    current_time = datetime.datetime.now()
+    formatted_time = current_time.strftime(format)
+    return formatted_time
+
+agent = create_agent(tools= [Search_tool,get_system_time], model = llm )
+response = agent.invoke({"messages": [{"role": "user", "content": "When was SpaceX's last launch and how many days ago was that from this instant give me in IST timezone?"}]})
+#print(response)
 print(response["messages"][-1].content)
 
-#"Give me tweet about today weather in banglore with the current temperature ")
 
 
 
