@@ -1,5 +1,6 @@
 from langchain_openai import ChatOpenAI 
 from langchain.agents import create_agent
+from langchain_community.tools import TavilySearchResults
 import os
 from openai import OpenAI
 from dotenv import load_dotenv
@@ -13,9 +14,12 @@ llm = ChatOpenAI(
     temperature=0.7,
 )
 
-agent = create_agent(tools= [], model = llm )
+search_tool = TavilySearchResults(search_depth='basic')
+
+agent = create_agent(tools= [search_tool], model = llm )
 response = agent.invoke({"messages": [{"role": "user", "content": "what the weather in banglore now write a tweet"}]})
-print(response)
+print(response["messages"][-1].content)
+
 #"Give me tweet about today weather in banglore with the current temperature ")
 
 
