@@ -5,6 +5,7 @@ from langchain_tavily import TavilySearch
 import datetime
 import os
 from openai import OpenAI
+from langchain import hub
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -26,10 +27,12 @@ def get_system_time(format: str = "%Y-%m-%d %H:%M:%S"):
     formatted_time = current_time.strftime(format)
     return formatted_time
 
-agent = create_agent(tools= [Search_tool,get_system_time], model = llm )
-response = agent.invoke({"messages": [{"role": "user", "content": "When was SpaceX's last launch and how many days ago was that from this instant ?"}]})
-#print(response)
-print(response["messages"][-1].content)
+
+
+react_prompt = hub.pull("hwchase17/react")
+
+
+agent = create_agent(tools= [Search_tool,get_system_time], model = llm , prompt = react_prompt )
 
 
 
